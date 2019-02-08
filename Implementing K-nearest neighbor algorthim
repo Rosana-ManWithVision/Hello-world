@@ -1,0 +1,809 @@
+TASK A
+What is the objective of the data collection process?
+
+Data collection is an essential step in research as it helps in completing research especially in discovering of hidden patterns from data, for information that will help in making decisions.
+What human activity types does this dataset have? How many subjects/people have performed these activities?
+
+The dataset has the following human activity types: walking, standing, going down/up stairs, talking with someone while talking and using a computer
+
+There are a total of 15 different subjects performing these activities.
+How many instances are available in the training and test sets? How many features are used to represent each instance? Summarize the type of features extracted in 2-3 sentences.
+
+There are a total of 7351 training instances. 23 features are used to represent each instance.
+Describe briefly what machine learning model is used in this paper for activity recognition and how is it trained. How much is the maximum accuracy achieved?
+
+The machine learning model used is nonlinear model. The model is trained with training data and is tested with the testing data. The maximum accuracy achieved is 97%.
+TASK B
+
+import numpy as np
+
+import pandas as pd
+
+import scipy
+
+import matplotlib.pyplot as plt
+
+from pylab import rcParams
+
+import urllib
+
+import sklearn
+
+from sklearn.neighbors import KNeighborsClassifier
+
+from sklearn import neighbors
+
+from sklearn import preprocessing
+
+from sklearn.cross_validation import train_test_split
+
+​
+
+from sklearn import metrics
+
+​
+
+np.set_printoptions(precision = 4, suppress = True)
+
+%matplotlib inline
+
+rcParams ['figure.figsize'] = 7,4
+
+plt.style.use ('seaborn-whitegrid')
+
+import pandas as pd
+
+address = 'C:/Users/ROSANA/Desktop/PYTHON/train1/X_train.txt'
+
+cars = pd.read_csv(address)
+
+cars
+
+	2.8858451e-001 -2.0294171e-002 -1.3290514e-001 -9.9527860e-001 -9.8311061e-001 -9.1352645e-001 -9.9511208e-001 -9.8318457e-001 -9.2352702e-001 -9.3472378e-001 -5.6737807e-001 -7.4441253e-001 8.5294738e-001 6.8584458e-001 8.1426278e-001 -9.6552279e-001 -9.9994465e-001 -9.9986303e-001 -9.9461218e-001 -9.9423081e-001 -9.8761392e-001 -9.4321999e-001 -4.0774707e-001 -6.7933751e-001 -6.0212187e-001 9.2929351e-001 -8.5301114e-001 3.5990976e-001 -5.8526382e-002 2.5689154e-001 -2.2484763e-001 2.6410572e-001 -9.5245630e-002 2.7885143e-001 -4.6508457e-001 4.9193596e-001 -1.9088356e-001 3.7631389e-001 4.3512919e-001 6.6079033e-001 9.6339614e-001 -1.4083968e-001 1.1537494e-001 -9.8524969e-001 -9.8170843e-001 -8.7762497e-001 -9.8500137e-001 -9.8441622e-001 -8.9467735e-001 8.9205451e-001 -1.6126549e-001 1.2465977e-001 9.7743631e-001 -1.2321341e-001 5.6482734e-002 -3.7542596e-001 8.9946864e-001 -9.7090521e-001 -9.7551037e-001 -9.8432539e-001 -9.8884915e-001 -9.1774264e-001 -1.0000000e+000 -1.0000000e+000 1.1380614e-001 -5.9042500e-001 5.9114630e-001 -5.9177346e-001 5.9246928e-001 -7.4544878e-001 7.2086167e-001 -7.1237239e-001 7.1130003e-001 -9.9511159e-001 9.9567491e-001 -9.9566759e-001 9.9165268e-001 5.7022164e-001 4.3902735e-001 9.8691312e-001 7.7996345e-002 5.0008031e-003 -6.7830808e-002 -9.9351906e-001 -9.8835999e-001 -9.9357497e-001 -9.9448763e-001 -9.8620664e-001 -9.9281835e-001 -9.8518010e-001 -9.9199423e-001 -9.9311887e-001 9.8983471e-001 9.9195686e-001 9.9051920e-001 -9.9352201e-001 -9.9993487e-001 -9.9982045e-001 -9.9987846e-001 -9.9436404e-001 -9.8602487e-001 -9.8923361e-001 -8.1994925e-001 -7.9304645e-001 -8.8885295e-001 1.0000000e+000 -2.2074703e-001 6.3683075e-001 3.8764356e-001 2.4140146e-001 -5.2252848e-002 2.6417720e-001 3.7343945e-001 3.4177752e-001 -5.6979119e-001 2.6539882e-001 -4.7787489e-001 -3.8530050e-001 3.3643943e-002 -1.2651082e-001 -6.1008489e-003 -3.1364791e-002 1.0772540e-001 -9.8531027e-001 -9.7662344e-001 -9.9220528e-001 -9.8458626e-001 -9.7635262e-001 -9.9236164e-001 -8.6704374e-001 -9.3378602e-001 -7.4756618e-001 8.4730796e-001 9.1489534e-001 8.3084054e-001 -9.6718428e-001 -9.9957831e-001 -9.9935432e-001 -9.9976339e-001 -9.8343808e-001 -9.7861401e-001 -9.9296558e-001 8.2631682e-002 2.0226765e-001 -1.6875669e-001 9.6323236e-002 -2.7498511e-001 4.9864419e-001 -2.2031685e-001 1.0000000e+000 -9.7297139e-001 3.1665451e-001 3.7572641e-001 7.2339919e-001 -7.7111201e-001 6.9021323e-001 -3.3183104e-001 7.0958377e-001 1.3487336e-001 3.0109948e-001 -9.9167400e-002 -5.5517369e-002 -6.1985797e-002 -9.9211067e-001 -9.9251927e-001 -9.9205528e-001 -9.9216475e-001 -9.9494156e-001 -9.9261905e-001 -9.9015585e-001 -9.8674277e-001 -9.9204155e-001 9.9442876e-001 9.9175581e-001 9.8935195e-001 -9.9445335e-001 -9.9993755e-001 -9.9995350e-001 -9.9992294e-001 -9.9229974e-001 -9.9693892e-001 -9.9224298e-001 -5.8985096e-001 -6.8845905e-001 -5.7210686e-001 2.9237634e-001 -3.6199802e-001 4.0554269e-001 -3.9006951e-002 9.8928381e-001 -4.1456048e-001 3.9160251e-001 2.8225087e-001 9.2726984e-001 -5.7237001e-001 6.9161920e-001 4.6828982e-001 -1.3107697e-001 -8.7159695e-002 3.3624748e-001 -9.5943388e-001 -9.5055150e-001 -9.5799295e-001 -9.4630524e-001 -9.9255572e-001 -9.5943388e-001 -9.9849285e-001 -9.5763740e-001 -2.3258164e-001 -1.7317874e-001 -2.2896660e-002 9.4831568e-002 1.9181715e-001 -9.5943388e-001 -9.5055150e-001 -9.5799295e-001 -9.4630524e-001 -9.9255572e-001 -9.5943388e-001 -9.9849285e-001 -9.5763740e-001 -2.3258164e-001 -1.7317874e-001 -2.2896660e-002 9.4831568e-002 1.9181715e-001 -9.9330586e-001 -9.9433641e-001 -9.9450037e-001 -9.9278399e-001 -9.9120847e-001 -9.9330586e-001 -9.9989188e-001 -9.9293370e-001 -8.6341476e-001 2.8308522e-001 -2.3730869e-001 -1.0543219e-001 -3.8212313e-002 -9.6895908e-001 -9.6433518e-001 -9.5724477e-001 -9.7505986e-001 -9.9155366e-001 -9.6895908e-001 -9.9928646e-001 -9.4976582e-001 7.2579035e-002 5.7251142e-001 -7.3860219e-001 2.1257776e-001 4.3340495e-001 -9.9424782e-001 -9.9136761e-001 -9.9314298e-001 -9.8893563e-001 -9.9348603e-001 -9.9424782e-001 -9.9994898e-001 -9.9454718e-001 -6.1976763e-001 2.9284049e-001 -1.7688920e-001 -1.4577921e-001 -1.2407233e-001 -9.9478319e-001 -9.8298410e-001 -9.3926865e-001 -9.9542175e-001 -9.8313297e-001 -9.0616498e-001 -9.9688864e-001 -9.8451927e-001 -9.3208200e-001 -9.9375634e-001 -9.8316285e-001 -8.8505422e-001 -9.9396185e-001 -9.9344611e-001 -9.2342772e-001 -9.7473271e-001 -9.9996838e-001 -9.9968911e-001 -9.9489148e-001 -9.9592602e-001 -9.8970889e-001 -9.8799115e-001 -9.4635692e-001 -9.0474776e-001 -5.9130248e-001 -1.0000000e+000 -1.0000000e+000 -1.0000000e+000 2.5248290e-001 1.3183575e-001 -5.2050251e-002 1.4205056e-001 -1.5068250e-001 -2.2054694e-001 -5.5873853e-001 2.4676868e-001 -7.4155206e-003 -9.9996279e-001 -9.9998650e-001 -9.9997907e-001 -9.9996244e-001 -9.9993222e-001 -9.9972512e-001 -9.9967039e-001 -9.9998582e-001 -9.9996867e-001 -9.9997686e-001 -9.9986966e-001 -9.9977613e-001 -9.9997115e-001 -9.9991925e-001 -9.9965680e-001 -9.9986046e-001 -9.9986695e-001 -9.9986301e-001 -9.9973783e-001 -9.9973220e-001 -9.9949261e-001 -9.9981364e-001 -9.9968182e-001 -9.9983940e-001 -9.9973823e-001 -9.9961197e-001 -9.9968721e-001 -9.9983863e-001 -9.9359234e-001 -9.9947584e-001 -9.9966204e-001 -9.9964230e-001 -9.9929341e-001 -9.9789222e-001 -9.9593249e-001 -9.9514642e-001 -9.9473990e-001 -9.9968826e-001 -9.9892456e-001 -9.9567134e-001 -9.9487731e-001 -9.9945439e-001 -9.9233245e-001 -9.8716991e-001 -9.8969609e-001 -9.9582068e-001 -9.9093631e-001 -9.9705167e-001 -9.9380547e-001 -9.9051869e-001 -9.9699279e-001 -9.9673689e-001 -9.9197516e-001 -9.9324167e-001 -9.9834907e-001 -9.9110842e-001 -9.5988537e-001 -9.9051499e-001 -9.9993475e-001 -9.9982048e-001 -9.9988449e-001 -9.9302626e-001 -9.9137339e-001 -9.9623962e-001 -1.0000000e+000 -1.0000000e+000 -1.0000000e+000 1.0000000e+000 -2.4000000e-001 -1.0000000e+000 8.7038451e-001 2.1069700e-001 2.6370789e-001 -7.0368577e-001 -9.0374251e-001 -5.8257362e-001 -9.3631005e-001 -5.0734474e-001 -8.0553591e-001 -9.9998649e-001 -9.9997960e-001 -9.9997478e-001 -9.9995513e-001 -9.9991861e-001 -9.9964011e-001 -9.9948330e-001 -9.9996087e-001 -9.9998227e-001 -9.9997072e-001 -9.9981098e-001 -9.9948472e-001 -9.9998083e-001 -9.9985189e-001 -9.9993261e-001 -9.9989993e-001 -9.9982444e-001 -9.9985982e-001 -9.9972751e-001 -9.9972876e-001 -9.9956707e-001 -9.9976524e-001 -9.9990021e-001 -9.9981490e-001 -9.9970980e-001 -9.9959608e-001 -9.9985216e-001 -9.9982210e-001 -9.9939988e-001 -9.9976559e-001 -9.9995846e-001 -9.9994951e-001 -9.9983850e-001 -9.9981351e-001 -9.9878054e-001 -9.9857783e-001 -9.9961968e-001 -9.9998359e-001 -9.9982812e-001 -9.9868068e-001 -9.9984416e-001 -9.9992792e-001 -9.8657442e-001 -9.8176153e-001 -9.8951478e-001 -9.8503264e-001 -9.7388607e-001 -9.9403493e-001 -9.8653085e-001 -9.8361636e-001 -9.9235201e-001 -9.8049843e-001 -9.7227092e-001 -9.9494426e-001 -9.9756862e-001 -9.8408510e-001 -9.9433541e-001 -9.8527621e-001 -9.9986371e-001 -9.9966608e-001 -9.9993462e-001 -9.9034389e-001 -9.9483569e-001 -9.9441158e-001 -7.1240225e-001 -6.4484236e-001 -8.3899298e-001 -1.0000000e+000 -1.0000000e+000 -1.0000000e+000 -2.5754888e-001 9.7947109e-002 5.4715105e-001 3.7731121e-001 1.3409154e-001 2.7337197e-001 -9.1261831e-002 -4.8434650e-001 -7.8285070e-001 -9.9986502e-001 -9.9993178e-001 -9.9997295e-001 -9.9997018e-001 -9.9993012e-001 -9.9995862e-001 -9.9992899e-001 -9.9998465e-001 -9.9986326e-001 -9.9996815e-001 -9.9993610e-001 -9.9995363e-001 -9.9986442e-001 -9.9996098e-001 -9.9945373e-001 -9.9997811e-001 -9.9999153e-001 -9.9999010e-001 -9.9996857e-001 -9.9980657e-001 -9.9834600e-001 -9.9896122e-001 -9.9961874e-001 -9.9998934e-001 -9.9993540e-001 -9.9838752e-001 -9.9964264e-001 -9.9997266e-001 -9.9995535e-001 -9.9997630e-001 -9.9990583e-001 -9.9998550e-001 -9.9993717e-001 -9.9975115e-001 -9.9907227e-001 -9.9992754e-001 -9.9995158e-001 -9.9990585e-001 -9.9989269e-001 -9.9944433e-001 -9.9994099e-001 -9.9995861e-001 -9.5215466e-001 -9.5613397e-001 -9.4887014e-001 -9.7432057e-001 -9.2572179e-001 -9.5215466e-001 -9.9828520e-001 -9.7327320e-001 -6.4637645e-001 -7.9310345e-001 -8.8436120e-002 -4.3647104e-001 -7.9684048e-001 -9.9372565e-001 -9.9375495e-001 -9.9197570e-001 -9.9336472e-001 -9.8817543e-001 -9.9372565e-001 -9.9991844e-001 -9.9136366e-001 -1.0000000e+000 -9.3650794e-001 3.4698853e-001 -5.1608015e-001 -8.0276003e-001 -9.8013485e-001 -9.6130944e-001 -9.7365344e-001 -9.5226383e-001 -9.8949813e-001 -9.8013485e-001 -9.9924035e-001 -9.9265553e-001 -7.0129141e-001 -1.0000000e+000 -1.2898890e-001 5.8615643e-001 3.7460462e-001 -9.9199044e-001 -9.9069746e-001 -9.8994084e-001 -9.9244784e-001 -9.9104773e-001 -9.9199044e-001 -9.9993676e-001 -9.9045792e-001 -8.7130580e-001 -1.0000000e+000 -7.4323027e-002 -2.9867637e-001 -7.1030407e-001 -1.1275434e-001 3.0400372e-002 -4.6476139e-001 -1.8445884e-002 -8.4124676e-001 1.7994061e-001 -5.8626924e-002
+0 	2.7841883e-001 -1.6410568e-002 -1.2352019e-0...
+1 	2.7965306e-001 -1.9467156e-002 -1.1346169e-0...
+2 	2.7917394e-001 -2.6200646e-002 -1.2328257e-0...
+3 	2.7662877e-001 -1.6569655e-002 -1.1536185e-0...
+4 	2.7719877e-001 -1.0097850e-002 -1.0513725e-0...
+5 	2.7945388e-001 -1.9640776e-002 -1.1002215e-0...
+6 	2.7743247e-001 -3.0488303e-002 -1.2536043e-0...
+7 	2.7729342e-001 -2.1750698e-002 -1.2075082e-0...
+8 	2.8058569e-001 -9.9602983e-003 -1.0606516e-0...
+9 	2.7688027e-001 -1.2721805e-002 -1.0343832e-0...
+10 	2.7622817e-001 -2.1441302e-002 -1.0820234e-0...
+11 	2.7845700e-001 -2.0414761e-002 -1.1273172e-0...
+12 	2.7717497e-001 -1.4712802e-002 -1.0675647e-0...
+13 	2.9794572e-001 2.7093908e-002 -6.1668123e-0...
+14 	2.7920345e-001 -2.3020143e-002 -1.2208028e-0...
+15 	2.7903836e-001 -1.4800378e-002 -1.1684896e-0...
+16 	2.8013490e-001 -1.3916951e-002 -1.0637048e-0...
+17 	2.7773106e-001 -1.8210718e-002 -1.0918803e-0...
+18 	2.7556818e-001 -1.6979698e-002 -1.1142918e-0...
+19 	2.7756171e-001 -1.4318487e-002 -1.0787724e-0...
+20 	2.7715238e-001 -1.7983328e-002 -1.0660117e-0...
+21 	2.7567630e-001 -2.1264234e-002 -1.1080122e-0...
+22 	2.7920020e-001 -1.7714427e-002 -1.0916135e-0...
+23 	2.8171549e-001 -1.1910678e-002 -1.0287513e-0...
+24 	2.7899267e-001 -1.4531029e-002 -1.0659617e-0...
+25 	2.7573444e-001 -1.8018840e-002 -1.0677578e-0...
+26 	1.4450396e-001 1.8926326e-001 6.2769317e-0...
+27 	2.8725164e-001 -3.7455064e-002 -1.4597431e-0...
+28 	2.7999760e-001 -1.9484036e-002 -1.0572355e-0...
+29 	2.2184689e-001 3.4107675e-002 -1.2361242e-0...
+... 	...
+7321 	8.7901707e-002 -1.1899273e-001 -5.2787115e-0...
+7322 	2.1646772e-001 -6.8213834e-002 -1.1983199e-0...
+7323 	3.0349015e-001 -6.9855355e-002 -9.1221544e-0...
+7324 	3.5597537e-001 -4.6314351e-002 -8.7424726e-0...
+7325 	3.4156239e-001 -6.3080821e-003 -1.2469316e-0...
+7326 	1.9486662e-001 5.2403209e-003 -1.4864153e-0...
+7327 	1.9357200e-001 1.2456183e-002 -1.7371711e-0...
+7328 	3.5465956e-001 -1.0553662e-002 -1.9650404e-0...
+7329 	3.8967378e-001 -1.5066695e-002 -1.6658267e-0...
+7330 	3.0612705e-001 -2.5759197e-002 -1.0398100e-0...
+7331 	1.8889779e-001 -9.4342119e-002 -6.2391712e-0...
+7332 	2.1578917e-001 -2.2919941e-002 -2.3671294e-0...
+7333 	4.0777950e-001 -5.3721452e-002 -1.6067095e-0...
+7334 	2.6027873e-001 8.1264979e-004 -1.0340613e-0...
+7335 	1.2806415e-001 -2.7657030e-002 -8.8319274e-0...
+7336 	2.7841439e-001 -7.0497136e-002 -5.0015617e-0...
+7337 	3.4475719e-001 -4.5966449e-002 -1.1918757e-0...
+7338 	3.2664675e-001 1.2035511e-002 -9.1358964e-0...
+7339 	2.2328281e-001 1.3910528e-002 -2.1415242e-0...
+7340 	3.6376842e-001 -1.1263501e-002 -2.7572397e-0...
+7341 	2.7613663e-001 -1.0804612e-001 -5.6676959e-0...
+7342 	2.9423016e-001 -3.9968268e-002 -1.4339653e-0...
+7343 	2.2120587e-001 -3.6390067e-002 -1.6765076e-0...
+7344 	2.0786071e-001 6.3422856e-002 -2.2056733e-0...
+7345 	2.3796648e-001 -1.0878070e-003 -1.4832590e-0...
+7346 	2.9966534e-001 -5.7193414e-002 -1.8123302e-0...
+7347 	2.7385271e-001 -7.7493259e-003 -1.4746837e-0...
+7348 	2.7338737e-001 -1.7010616e-002 -4.5021828e-0...
+7349 	2.8965416e-001 -1.8843044e-002 -1.5828059e-0...
+7350 	3.5150347e-001 -1.2423118e-002 -2.0386717e-0...
+
+7351 rows × 1 columns
+
+from sklearn import datasets
+
+from sklearn.cross_validation import train_test_split
+
+​
+
+from sklearn.preprocessing import StandardScaler
+
+from sklearn.neighbors import KNeighborsClassifier
+
+​
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+from matplotlib.colors import ListedColormap
+
+df = pd.read_csv("C:/Users/ROSANA/Desktop/PYTHON/train1/X_train.txt")
+
+​
+
+def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
+
+   # setup marker generator and color map
+
+   markers = ('s', 'x', 'o', '^', 'v')
+
+   colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
+
+   cmap = ListedColormap(colors[:len(np.unique(y))])
+
+​
+
+   # plot the decision surface
+
+   x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+
+   x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+
+   xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
+
+   np.arange(x2_min, x2_max, resolution))
+
+   Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
+
+   Z = Z.reshape(xx1.shape)
+
+   plt.contourf(xx1, xx2, Z, alpha=0.4, cmap=cmap)
+
+   plt.xlim(xx1.min(), xx1.max())
+
+   plt.ylim(xx2.min(), xx2.max())
+
+​
+
+   # plot all samples
+
+   X_test, y_test = X[test_idx, :], y[test_idx]
+
+   for idx, cl in enumerate(np.unique(y)):
+
+      plt.scatter(x=X[y == cl, 0], y=X[y == cl, 1],
+
+               alpha=0.8, c=cmap(idx),
+
+               marker=markers[idx], label=cl)
+
+   # highlight test samples
+
+   if test_idx:
+
+      X_test, y_test = X[test_idx, :], y[test_idx]
+
+      plt.scatter(X_test[:, 0], X_test[:, 1], c='',
+
+               alpha=1.0, linewidth=1, marker='o',
+
+               s=55, label='test set')
+
+​
+
+iris = datasets.load_iris()
+
+X = iris.data[:, [2, 3]]
+
+y = iris.target
+
+​
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+​
+
+sc = StandardScaler()
+
+X_train_std = sc.fit_transform(X_train)
+
+X_test_std = sc.fit_transform(X_test)
+
+​
+
+X_combined_std = np.vstack((X_train_std, X_test_std))
+
+y_combined = np.hstack((y_train, y_test))
+
+​
+
+knn = KNeighborsClassifier(n_neighbors=5, p=2,
+
+                           metric='minkowski')
+
+knn.fit(X_train_std, y_train)
+
+​
+
+plot_decision_regions(X_combined_std, y_combined,
+
+                      classifier=knn, test_idx=range(105,150))
+
+​
+
+plt.xlabel('K')
+
+plt.ylabel('Y')
+
+plt.legend(loc='upper left')
+
+plt.show()
+
+​
+
+    from sklearn.metrics import accuracy_score
+
+    import numpy as np
+
+    y_true = np.array([0, 0, 0, 1, 1, 1, 2, 2, 2, 2])
+
+    y_pred = np.array([0, 0, 0, 1, 1, 1, 2, 2 , 2, 0])
+
+    accuracy_score(y_true, y_pred)
+
+0.9
+
+    w = np.ones(y_true.shape[0])
+
+    for idx, i in enumerate(np.bincount(y_true)):
+
+        w[y_true == idx] *= (i/float(y_true.shape[0]))
+
+    accuracy_score(y_true, y_pred, sample_weight=w)
+
+0.8823529411764706
+
+TASK C
+
+>>> from sklearn.linear_model import ElasticNetCV
+
+>>> from sklearn.datasets import make_regression
+
+>>>
+
+>>> X, y = make_regression(n_features=2, random_state=0)
+
+>>> regr = ElasticNetCV(cv=5, random_state=0)
+
+>>> regr.fit(X, y)
+
+ElasticNetCV(alphas=None, copy_X=True, cv=5, eps=0.001, fit_intercept=True,
+
+       l1_ratio=0.5, max_iter=1000, n_alphas=100, n_jobs=None,
+
+       normalize=False, positive=False, precompute='auto', random_state=0,
+
+       selection='cyclic', tol=0.0001, verbose=0)
+
+>>> print(regr.alpha_) 
+
+0.1994727942696716
+
+>>> print(regr.intercept_) 
+
+0.3988829654276791
+
+>>> print(regr.predict([[0, 0]]))
+
+[0.39888297]
+
+# scikit-learn logistic regression
+
+​
+
+from sklearn import datasets
+
+import numpy as np
+
+iris = datasets.load_iris()
+
+X = iris.data[:, [2, 3]]
+
+y = iris.target
+
+​
+
+from sklearn.cross_validation import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+​
+
+from sklearn.preprocessing import StandardScaler
+
+sc = StandardScaler()
+
+sc.fit(X_train)
+
+X_train_std = sc.transform(X_train)
+
+X_test_std = sc.transform(X_test)
+
+​
+
+from sklearn.linear_model import LogisticRegression
+
+lr = LogisticRegression(C=1000.0, random_state=0)
+
+lr.fit(X_train_std, y_train)
+
+​
+
+# Decision region drawing
+
+from matplotlib.colors import ListedColormap
+
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("C:/Users/ROSANA/Desktop/PYTHON/train1/X_train.txt")
+
+​
+
+def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
+
+   # setup marker generator and color map
+
+   markers = ('s', 'x', 'o', '^', 'v')
+
+   colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
+
+   cmap = ListedColormap(colors[:len(np.unique(y))])
+
+​
+
+   # plot the decision surface
+
+   x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+
+   x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+
+   xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
+
+   np.arange(x2_min, x2_max, resolution))
+
+   Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
+
+   Z = Z.reshape(xx1.shape)
+
+   plt.contourf(xx1, xx2, Z, alpha=0.4, cmap=cmap)
+
+   plt.xlim(xx1.min(), xx1.max())
+
+   plt.ylim(xx2.min(), xx2.max())
+
+​
+
+   # plot all samples
+
+   X_test, y_test = X[test_idx, :], y[test_idx]
+
+   for idx, cl in enumerate(np.unique(y)):
+
+      plt.scatter(x=X[y == cl, 0], y=X[y == cl, 1],
+
+               alpha=0.8, c=cmap(idx),
+
+               marker=markers[idx], label=cl)
+
+   # highlight test samples
+
+   if test_idx:
+
+      X_test, y_test = X[test_idx, :], y[test_idx]
+
+      plt.scatter(X_test[:, 0], X_test[:, 1], c='',
+
+               alpha=1.0, linewidth=1, marker='o',
+
+               s=55, label='test set')
+
+​
+
+X_combined_std = np.vstack((X_train_std, X_test_std))
+
+y_combined = np.hstack((y_train, y_test))
+
+​
+
+plot_decision_regions(X_combined_std,
+
+                      y_combined, classifier=lr,
+
+                      test_idx=range(105,150))
+
+​
+
+plt.xlabel('X')
+
+plt.ylabel('Y')
+
+plt.legend(loc='upper left')
+
+plt.show()
+
+TASK D
+
+from sklearn import datasets
+
+import numpy as np
+
+iris = datasets.load_iris()
+
+X = iris.data[:, [2, 3]]
+
+y = iris.target
+
+​
+
+from sklearn.cross_validation import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+​
+
+from sklearn.preprocessing import StandardScaler
+
+sc = StandardScaler()
+
+sc.fit(X_train)
+
+X_train_std = sc.transform(X_train)
+
+X_test_std = sc.transform(X_test)
+
+​
+
+from sklearn.svm import SVC
+
+svm = SVC(kernel='linear', C=1.0, random_state=0)
+
+svm.fit(X_train_std, y_train)
+
+​
+
+# Decision region drawing
+
+from matplotlib.colors import ListedColormap
+
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("C:/Users/ROSANA/Desktop/PYTHON/train1/X_train.txt")
+
+def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
+
+   # setup marker generator and color map
+
+   markers = ('s', 'x', 'o', '^', 'v')
+
+   colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
+
+   cmap = ListedColormap(colors[:len(np.unique(y))])
+
+​
+
+   # plot the decision surface
+
+   x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+
+   x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+
+   xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
+
+   np.arange(x2_min, x2_max, resolution))
+
+   Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
+
+   Z = Z.reshape(xx1.shape)
+
+   plt.contourf(xx1, xx2, Z, alpha=0.4, cmap=cmap)
+
+   plt.xlim(xx1.min(), xx1.max())
+
+   plt.ylim(xx2.min(), xx2.max())
+
+​
+
+   # plot all samples
+
+   X_test, y_test = X[test_idx, :], y[test_idx]
+
+   for idx, cl in enumerate(np.unique(y)):
+
+      plt.scatter(x=X[y == cl, 0], y=X[y == cl, 1],
+
+               alpha=0.8, c=cmap(idx),
+
+               marker=markers[idx], label=cl)
+
+   # highlight test samples
+
+   if test_idx:
+
+      X_test, y_test = X[test_idx, :], y[test_idx]
+
+      plt.scatter(X_test[:, 0], X_test[:, 1], c='',
+
+               alpha=1.0, linewidth=1, marker='o',
+
+               s=55, label='test set')
+
+​
+
+X_combined_std = np.vstack((X_train_std, X_test_std))
+
+y_combined = np.hstack((y_train, y_test))
+
+​
+
+plot_decision_regions(X_combined_std,
+
+                      y_combined, classifier=svm,
+
+                      test_idx=range(105,150))
+
+​
+
+plt.xlabel('X')
+
+plt.ylabel('Y')
+
+plt.legend(loc='lower right')
+
+plt.show()
+
+TASK E
+
+from sklearn import datasets
+
+from sklearn.cross_validation import train_test_split
+
+from sklearn.ensemble import RandomForestClassifier
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+from matplotlib.colors import ListedColormap
+
+​
+
+df = pd.read_csv("C:/Users/ROSANA/Desktop/PYTHON/train1/X_train.txt")
+
+​
+
+def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
+
+   # setup marker generator and color map
+
+   markers = ('s', 'x', 'o', '^', 'v')
+
+   colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
+
+   cmap = ListedColormap(colors[:len(np.unique(y))])
+
+​
+
+   # plot the decision surface
+
+   x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+
+   x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+
+   xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
+
+   np.arange(x2_min, x2_max, resolution))
+
+   Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
+
+   Z = Z.reshape(xx1.shape)
+
+   plt.contourf(xx1, xx2, Z, alpha=0.4, cmap=cmap)
+
+   plt.xlim(xx1.min(), xx1.max())
+
+   plt.ylim(xx2.min(), xx2.max())
+
+​
+
+   # plot all samples
+
+   X_test, y_test = X[test_idx, :], y[test_idx]
+
+   for idx, cl in enumerate(np.unique(y)):
+
+      plt.scatter(x=X[y == cl, 0], y=X[y == cl, 1],
+
+               alpha=0.8, c=cmap(idx),
+
+               marker=markers[idx], label=cl)
+
+   # highlight test samples
+
+   if test_idx:
+
+      X_test, y_test = X[test_idx, :], y[test_idx]
+
+      plt.scatter(X_test[:, 0], X_test[:, 1], c='',
+
+               alpha=1.0, linewidth=1, marker='o',
+
+               s=55, label='test set')
+
+​
+
+iris = datasets.load_iris()
+
+X = iris.data[:, [2, 3]]
+
+y = iris.target
+
+​
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+​
+
+forest = RandomForestClassifier(criterion='entropy',
+
+                               n_estimators=10, random_state=1, n_jobs=2)
+
+​
+
+forest.fit(X_train, y_train)
+
+​
+
+X_combined = np.vstack((X_train, X_test))
+
+y_combined = np.hstack((y_train, y_test))
+
+​
+
+plot_decision_regions(X_combined, y_combined,
+
+         classifier=forest, test_idx=range(105,150))
+
+​
+
+plt.xlabel('X')
+
+plt.ylabel('Y')
+
+plt.legend(loc='upper left')
+
+plt.show()
+
+COMPARISON OF CLASSIFIERS
+
+from sklearn.metrics import accuracy_score, log_loss
+
+from sklearn.neighbors import KNeighborsClassifier
+
+from sklearn.svm import SVC, LinearSVC, NuSVC
+
+from sklearn.tree import DecisionTreeClassifier
+
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
+
+from sklearn.naive_bayes import GaussianNB
+
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+
+​
+
+classifiers = [
+
+    KNeighborsClassifier(3),
+
+    SVC(kernel="rbf", C=0.025, probability=True),
+
+    DecisionTreeClassifier(),
+
+    RandomForestClassifier(),]
+
+​
+
+# Logging for Visual Comparison
+
+log_cols=["Classifier", "Accuracy", "Log Loss"]
+
+log = pd.DataFrame(columns=log_cols)
+
+​
+
+for clf in classifiers:
+
+    clf.fit(X_train, y_train)
+
+    name = clf.__class__.__name__
+
+    
+
+    print("="*30)
+
+    print(name)
+
+    
+
+    print('****Results****')
+
+    train_predictions = clf.predict(X_test)
+
+    acc = accuracy_score(y_test, train_predictions)
+
+    print("Accuracy: {:.4%}".format(acc))
+
+    
+
+    train_predictions = clf.predict_proba(X_test)
+
+    ll = log_loss(y_test, train_predictions)
+
+    print("Log Loss: {}".format(ll))
+
+    
+
+    log_entry = pd.DataFrame([[name, acc*100, ll]], columns=log_cols)
+
+    log = log.append(log_entry)
+
+    
+
+print("="*30)
+
+==============================
+KNeighborsClassifier
+****Results****
+Accuracy: 97.7778%
+Log Loss: 0.042434277886322896
+==============================
+SVC
+****Results****
+Accuracy: 60.0000%
+Log Loss: 0.10322948316830095
+==============================
+DecisionTreeClassifier
+****Results****
+Accuracy: 95.5556%
+Log Loss: 0.78293163501046
+==============================
+RandomForestClassifier
+****Results****
+Accuracy: 97.7778%
+Log Loss: 0.08067415552226478
+==============================
+
+TASK F
+
+The classification method that achieved the best performance is K-Neighbors network classification algorithm.
+
+The classification that performed the worst is Random Forest. Reason: KNN classification Algorithm is very efficient when it comes to large data sets as . The results could be improved by defining the data set.
+
+Suggestions for further improvement: i. Missing or outlier values should be done away with so as to reduce noise. ii. Hypothesis generation should be emphasized. iii. Important features should be identified. iv.
